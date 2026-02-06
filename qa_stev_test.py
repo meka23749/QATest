@@ -26,3 +26,11 @@ try:
 except ImportError:
     print("Dependency missing: requests. Install with: pip install requests", file=sys.stderr)
     raise SystemExit(2)
+
+@dataclass
+class Result:
+    ts_utc: str
+    ok: bool
+    status_code: Optional[int]
+    latency_ms: Optional[float]
+    error: Optional[str]
