@@ -166,3 +166,20 @@ def main() -> int:
         },
         "results": [asdict(r) for r in results],
     }
+
+    with open(args.out, "w", encoding="utf-8") as f:
+        json.dump(report, f, indent=2)
+
+    logging.info("Report written to %s", args.out)
+
+    print("\n=== Human Summary ===")
+    print(f"URL: {args.url}")
+    print(f"Availability: {report['summary']['availability_pct']}%  (ok={ok_count}, fail={fail_count})")
+    print(f"Latency p50/p95: {report['summary']['p50_latency_ms']} / {report['summary']['p95_latency_ms']} ms")
+    print("=====================\n")
+
+    return 0 if fail_count == 0 else 1
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
