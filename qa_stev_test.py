@@ -34,3 +34,7 @@ class Result:
     status_code: Optional[int]
     latency_ms: Optional[float]
     error: Optional[str]
+
+def utc_now() -> str:
+    """Return UTC timestamp as ISO string."""
+    return datetime.now(timezone.utc).isoformat(timespec="seconds")
