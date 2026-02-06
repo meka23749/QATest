@@ -104,13 +104,13 @@ def percentile(sorted_vals: List[float], p: float) -> Optional[float]:
 
 def main() -> int:
     ap = argparse.ArgumentParser(description="QA smoke/stability tester for an HTTP endpoint.")
-    ap.add_argument("--url", required=True, help="Target URL, e.g. http://localhost:8080/health")
+    ap.add_argument("--url", required=True, help="Target URL, e.g. http://127.0.0.1:8000/health")
     ap.add_argument("--duration", type=int, default=60, help="How long to test (seconds)")
     ap.add_argument("--interval", type=float, default=1.0, help="Seconds between requests")
     ap.add_argument("--timeout", type=float, default=2.0, help="HTTP timeout in seconds")
     ap.add_argument("--expected", default=None, help="Expected substring in response body (optional)")
     ap.add_argument("--log", default="qa_test.log", help="Log file path")
-    ap.add_argument("--out", default="qa_report.json", help="Output JSON report")
+    ap.add_argument("--out", default="qa_report_success.json", help="Output JSON report")
     ap.add_argument("--verbose", action="store_true", help="Verbose logging")
     args = ap.parse_args()
 
