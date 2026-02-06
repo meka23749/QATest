@@ -114,12 +114,12 @@ def main() -> int:
     ap.add_argument("--verbose", action="store_true", help="Verbose logging")
     args = ap.parse_args()
 
-    setup_logging(args.log, args.verbose)  # Initialize logging system (file + console)
+    setup_logging(args.log, args.verbose)  
 
     start_ts = utc_now()                   # Record test start time in UTC (ISO format)
     start_perf = time.perf_counter()       # Start precision timer for duration measurement
 
-    results: List[Result] = []             # List to store individual probe results
+    results: List[Result] = []             
 
     end_time = start_perf + max(1, args.duration)  # Compute test end time (minimum 1 second)
 
