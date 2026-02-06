@@ -147,3 +147,22 @@ def main() -> int:
     lat = sorted([r.latency_ms for r in results if r.ok and r.latency_ms is not None])
     p50 = percentile(lat, 50)
     p95 = percentile(lat, 95)
+
+    report: Dict[str, Any] = {
+        "meta": {"tool": "qa_smoke_test", "version": "1.0"},
+        "summary": {
+            "url": args.url,
+            "start_ts_utc": start_ts,
+            "end_ts_utc": end_ts,
+            "duration_s": round(duration_s, 3),
+            "total_requests": total,
+            "ok_requests": ok_count,
+            "fail_requests": fail_count,
+            "availability_pct": round(availability, 2),
+            "p50_latency_ms": round(p50, 2) if p50 is not None else None,
+            "p95_latency_ms": round(p95, 2) if p95 is not None else None,
+            "min_latency_ms": round(lat[0], 2) if lat else None,
+            "max_latency_ms": round(lat[-1], 2) if lat else None,
+        },
+        "results": [asdict(r) for r in results],
+    }
