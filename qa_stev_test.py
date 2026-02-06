@@ -57,8 +57,11 @@ def setup_logging(log_path: str, verbose: bool) -> None:
     )
     logging.info("Logging initialized. log_path=%s verbose=%s", log_path, verbose)
 
-    def probe(url: str, timeout_s: float, expected: Optional[str]) -> Result:
-        """One HTTP GET probe with basic validation + latency measurement."""
+    
+
+
+def probe(url: str, timeout_s: float, expected: Optional[str]) -> Result:
+    """One HTTP GET probe with basic validation + latency measurement."""
     ts = utc_now()
     t0 = time.perf_counter()
 
