@@ -59,6 +59,19 @@ def setup_logging(log_path: str, verbose: bool) -> None:
 
     
 
+def docker_logs(container: str, tail: int = 120) -> Optional[str]:
+    """Fetch last docker logs lines for debugging context (if docker is available)."""
+    try:
+        out = subprocess.check_output(
+            ["docker", "logs", "--tail", str(tail), container],
+            stderr=subprocess.STDOUT,
+            text=True,
+            timeout=5,
+        )
+        return out
+    except Exception as e:
+        logging.debug("Could not read docker logs for '%s': %s", container, e)
+        return None
 
 def probe(url: str, timeout_s: float, expected: Optional[str]) -> Result:
     """One HTTP GET probe with basic validation + latency measurement."""
