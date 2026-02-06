@@ -56,3 +56,24 @@ def setup_logging(log_path: str, verbose: bool) -> None:
         ],
     )
     logging.info("Logging initialized. log_path=%s verbose=%s", log_path, verbose)
+
+    def probe(url: str, timeout_s: float, expected: Optional[str]) -> Result:
+        """One HTTP GET probe with basic validation + latency measurement."""
+    ts = utc_now()
+    t0 = time.perf_counter()
+
+    try:
+        r = requests.get(url, timeout=timeout_s)
+        latency_ms = (time.perf_counter() - t0) * 1000.0
+
+        if expected and expected not in r.text:
+            return Result(ts, False, r.status_code, latency_ms, f"Expected '{expected}' not found")
+
+        if 200 <= r.status_code < 300:
+            return Result(ts, True, r.status_code, latency_ms, None)
+
+        return Result(ts, False, r.status_code, latency_ms, f"Non-2xx status: {r.status_code}")
+
+    except requests.RequestException as e:
+        latency_ms = (time.perf_counter() - t0) * 1000.0
+        return Result(ts, False, None, latency_ms, str(e))
