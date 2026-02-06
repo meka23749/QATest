@@ -93,3 +93,11 @@ def probe(url: str, timeout_s: float, expected: Optional[str]) -> Result:
     except requests.RequestException as e:
         latency_ms = (time.perf_counter() - t0) * 1000.0
         return Result(ts, False, None, latency_ms, str(e))
+
+def percentile(sorted_vals: List[float], p: float) -> Optional[float]:
+    """Nearest-rank percentile on sorted list."""
+    if not sorted_vals:
+        return None
+    idx = int(round((p / 100.0) * (len(sorted_vals) - 1))) #Compute the percentile index (rounded to the nearest rank)
+    idx = max(0, min(idx, len(sorted_vals) - 1)) # Prevent index out of range
+    return float(sorted_vals[idx])
