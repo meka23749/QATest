@@ -38,3 +38,21 @@ class Result:
 def utc_now() -> str:
     """Return UTC timestamp as ISO string."""
     return datetime.now(timezone.utc).isoformat(timespec="seconds")
+
+def setup_logging(log_path: str, verbose: bool) -> None:
+    """Configure logging to write both to a file and to the console."""
+    level = logging.DEBUG if verbose else logging.INFO # DEBUG shows everything, INFO shows only important messages
+    logging.basicConfig(
+        level=level,
+        format="%(asctime)sZ %(levelname)s %(message)s",  
+        datefmt="%Y-%m-%dT%H:%M:%S",
+        handlers=[
+            # Handlers define where logs are sent
+            # Write logs to a file (UTF-8 to support all characters)
+            logging.FileHandler(log_path, encoding="utf-8"),
+
+            # Also print logs to standard output (terminal)
+            logging.StreamHandler(sys.stdout),
+        ],
+    )
+    logging.info("Logging initialized. log_path=%s verbose=%s", log_path, verbose)
