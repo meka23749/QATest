@@ -122,3 +122,28 @@ def main() -> int:
     results: List[Result] = []             # List to store individual probe results
 
     end_time = start_perf + max(1, args.duration)  # Compute test end time (minimum 1 second)
+
+    i = 0
+    while time.perf_counter() < end_time:
+        i += 1
+        res = probe(args.url, args.timeout, args.expected)
+        results.append(res)
+
+        if res.ok:
+            logging.info("OK   #%d status=%s latency_ms=%.2f", i, res.status_code, res.latency_ms or -1.0)
+        else:
+            logging.warning("FAIL #%d status=%s latency_ms=%s err=%s", i, res.status_code, res.latency_ms, res.error)
+
+        time.sleep(max(0.0, args.interval))
+
+    end_ts = utc_now()
+    duration_s = time.perf_counter() - start_perf
+
+    ok_count = sum(1 for r in results if r.ok)
+    total = len(results)
+    fail_count = total - ok_count
+    availability = (ok_count / total * 100.0) if total else 0.0
+
+    lat = sorted([r.latency_ms for r in results if r.ok and r.latency_ms is not None])
+    p50 = percentile(lat, 50)
+    p95 = percentile(lat, 95)
