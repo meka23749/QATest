@@ -101,3 +101,24 @@ def percentile(sorted_vals: List[float], p: float) -> Optional[float]:
     idx = int(round((p / 100.0) * (len(sorted_vals) - 1))) #Compute the percentile index (rounded to the nearest rank)
     idx = max(0, min(idx, len(sorted_vals) - 1)) # Prevent index out of range
     return float(sorted_vals[idx])
+
+def main() -> int:
+    ap = argparse.ArgumentParser(description="QA smoke/stability tester for an HTTP endpoint.")
+    ap.add_argument("--url", required=True, help="Target URL, e.g. http://localhost:8080/health")
+    ap.add_argument("--duration", type=int, default=60, help="How long to test (seconds)")
+    ap.add_argument("--interval", type=float, default=1.0, help="Seconds between requests")
+    ap.add_argument("--timeout", type=float, default=2.0, help="HTTP timeout in seconds")
+    ap.add_argument("--expected", default=None, help="Expected substring in response body (optional)")
+    ap.add_argument("--log", default="qa_test.log", help="Log file path")
+    ap.add_argument("--out", default="qa_report.json", help="Output JSON report")
+    ap.add_argument("--verbose", action="store_true", help="Verbose logging")
+    args = ap.parse_args()
+
+    setup_logging(args.log, args.verbose)  # Initialize logging system (file + console)
+
+    start_ts = utc_now()                   # Record test start time in UTC (ISO format)
+    start_perf = time.perf_counter()       # Start precision timer for duration measurement
+
+    results: List[Result] = []             # List to store individual probe results
+
+    end_time = start_perf + max(1, args.duration)  # Compute test end time (minimum 1 second)
